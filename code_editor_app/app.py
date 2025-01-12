@@ -22,9 +22,9 @@ def run_code():
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])
-def ask_ai():
+def talk_to_recruiter():
     query = request.json.get('query', '')
-    return jsonify({'response': f"AI Response for: {query}"})
+    return jsonify({'response': f"Recruiter: {query}"})
 
 @app.route('/request_help', methods=['POST'])
 def request_help():
