@@ -10,7 +10,7 @@
 
 <body>
     <header>
-        <h1>CodeCompass Code Editor</h1>
+        <h1>CodeCompass AI</h1>
     </header>
     <div id="container">
         <!-- Question Section -->
@@ -30,7 +30,10 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
 
         <!-- Code Editor Section -->
         <div id="editor-section">
-            <textarea id="code-editor">print("Hello, World!")</textarea>
+            <textarea id="code-editor">
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+            </textarea>
             <button id="run-btn">Run Code</button>
             <pre id="output"></pre>
         </div>
@@ -43,7 +46,7 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
         <div class="button-group">
             <button id="ask-ai-btn" class="primary-btn">Ask AI</button>
             <button id="request-help-btn" class="help-btn">Request Help</button>
-            <button id="get-summary-btn" class="summary-btn">Get Summary</button>
+            <button id="get-summary-btn" class="summary-btn">Feedback</button>
         </div>
         <pre id="assistant-output">AI responses will appear here...</pre>
     </div>

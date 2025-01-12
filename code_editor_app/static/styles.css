@@ -1,3 +1,4 @@
+/* General Body Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -49,30 +50,103 @@ pre {
     overflow-y: auto;
 }
 
-/* AI Assistant */
+/* AI Assistant Section */
 #ai-assistant {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 48%;
-    height: 30%;
+    /* Adjust width as necessary */
+    height: 50%;
+    /* Increased height to cover halfway up the page */
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 10px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    /* Scrollable if content exceeds box height */
+}
+
+#ai-assistant textarea {
+    width: 100%;
+    height: 40%;
+    /* Adjust height to fit within the resized box */
+    font-family: monospace;
+    resize: none;
+}
+
+#ai-assistant .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+#ai-assistant pre {
+    margin-top: 10px;
+    background-color: #f4f4f4;
+    padding: 5px;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    height: 45%;
+    /* Adjust for resized box */
     overflow-y: auto;
 }
 
+/* AI Assistant Buttons */
 .primary-btn {
     background-color: #4CAF50;
+    /* Green for "Ask AI" */
     color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    flex: 1;
+    /* Equal width for buttons in the group */
+    margin-right: 5px;
+}
+
+.primary-btn:hover {
+    background-color: #45a049;
+    /* Darker green on hover */
 }
 
 .help-btn {
     background-color: #ff9800;
+    /* Orange for "Request Help" */
     color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    flex: 1;
+    margin-right: 5px;
+}
+
+.help-btn:hover {
+    background-color: #fb8c00;
+    /* Darker orange on hover */
 }
 
 .summary-btn {
     background-color: #2196F3;
+    /* Blue for "Get Summary" */
     color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.summary-btn:hover {
+    background-color: #1e88e5;
+    /* Darker blue on hover */
+}
+
+/* Optional: Add consistent button styling */
+.button-group button {
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Adjust font size */
+    font-weight: bold;
+    /* Make text bold */
 }
