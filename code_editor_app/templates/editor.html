@@ -4,108 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Editor</title>
+    <title>CodeCompass Code Editor</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        #container {
-            display: flex;
-            flex: 1;
-        }
-
-        #question-section,
-        #editor-section {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        #question-section {
-            border-right: 1px solid #ddd;
-        }
-
-        textarea {
-            width: 100%;
-            height: 70%;
-            font-family: monospace;
-        }
-
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ddd;
-            white-space: pre-wrap;
-            height: 25%;
-            overflow-y: auto;
-        }
-
-        /* AI Assistant Section */
-        #ai-assistant {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 48%;
-            height: 30%;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 10px;
-            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-        }
-
-        #ai-assistant h3 {
-            margin: 0 0 10px;
-        }
-
-        #ai-assistant textarea {
-            width: 100%;
-            height: 25%;
-            font-family: monospace;
-            resize: none;
-        }
-
-        #ai-assistant button {
-            margin-top: 10px;
-            width: 100%;
-            padding: 8px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #ai-assistant button:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 
 <body>
@@ -113,7 +13,7 @@
         <h1>CodeCompass Code Editor</h1>
     </header>
     <div id="container">
-        <!-- Left Column: Question Section -->
+        <!-- Question Section -->
         <div id="question-section">
             <h2>Question: Two Sum</h2>
             <p>Given an array of integers nums and an integer target, return indices of the two numbers such that they
@@ -128,7 +28,7 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
             </pre>
         </div>
 
-        <!-- Right Column: Code Editor Section -->
+        <!-- Code Editor Section -->
         <div id="editor-section">
             <textarea id="code-editor">print("Hello, World!")</textarea>
             <button id="run-btn">Run Code</button>
@@ -140,12 +40,16 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
     <div id="ai-assistant">
         <h3>AI Assistant</h3>
         <textarea id="assistant-input" placeholder="Ask the AI..."></textarea>
-        <button id="ask-ai-btn">Send</button>
+        <div class="button-group">
+            <button id="ask-ai-btn" class="primary-btn">Ask AI</button>
+            <button id="request-help-btn" class="help-btn">Request Help</button>
+            <button id="get-summary-btn" class="summary-btn">Get Summary</button>
+        </div>
         <pre id="assistant-output">AI responses will appear here...</pre>
     </div>
 
     <script>
-        // Run code button logic
+        // Run code logic
         document.getElementById('run-btn').addEventListener('click', async () => {
             const code = document.getElementById('code-editor').value;
             const response = await fetch('/run_code', {
@@ -157,16 +61,30 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
             document.getElementById('output').textContent = result.output || result.error;
         });
 
-        // AI Assistant logic
+        // Ask AI logic
         document.getElementById('ask-ai-btn').addEventListener('click', async () => {
-            const userQuery = document.getElementById('assistant-input').value;
+            const query = document.getElementById('assistant-input').value;
             const response = await fetch('/ask_ai', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: userQuery })
+                body: JSON.stringify({ query })
             });
             const result = await response.json();
-            document.getElementById('assistant-output').textContent = result.response || "No response.";
+            document.getElementById('assistant-output').textContent = result.response;
+        });
+
+        // Request Help logic
+        document.getElementById('request-help-btn').addEventListener('click', async () => {
+            const response = await fetch('/request_help', { method: 'POST' });
+            const result = await response.json();
+            document.getElementById('assistant-output').textContent = result.response;
+        });
+
+        // Get Summary logic
+        document.getElementById('get-summary-btn').addEventListener('click', async () => {
+            const response = await fetch('/get_summary', { method: 'POST' });
+            const result = await response.json();
+            document.getElementById('assistant-output').textContent = result.response;
         });
     </script>
 </body>

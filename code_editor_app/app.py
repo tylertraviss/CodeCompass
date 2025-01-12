@@ -9,21 +9,30 @@ def home():
 
 @app.route('/run_code', methods=['POST'])
 def run_code():
-    code = request.json.get('code')
+    code = request.json.get('code', '')
     try:
-        # Execute the code and capture output
         result = subprocess.run(
             ['python3', '-c', code],
             capture_output=True,
             text=True,
             timeout=5  # Prevent infinite loops
         )
-        return jsonify({
-            'output': result.stdout,
-            'error': result.stderr
-        })
+        return jsonify({'output': result.stdout, 'error': result.stderr})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.route('/ask_ai', methods=['POST'])
+def ask_ai():
+    query = request.json.get('query', '')
+    return jsonify({'response': f"AI Response for: {query}"})
+
+@app.route('/request_help', methods=['POST'])
+def request_help():
+    return jsonify({'response': "Here's some help with your code!"})
+
+@app.route('/get_summary', methods=['POST'])
+def get_summary():
+    return jsonify({'response': "Here’s a summary of your progress."})
 
 if __name__ == '__main__':
     app.run(debug=True)
