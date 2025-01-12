@@ -66,6 +66,45 @@
             height: 25%;
             overflow-y: auto;
         }
+
+        /* AI Assistant Section */
+        #ai-assistant {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 48%;
+            height: 30%;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        #ai-assistant h3 {
+            margin: 0 0 10px;
+        }
+
+        #ai-assistant textarea {
+            width: 100%;
+            height: 25%;
+            font-family: monospace;
+            resize: none;
+        }
+
+        #ai-assistant button {
+            margin-top: 10px;
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #ai-assistant button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 
@@ -96,7 +135,17 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
             <pre id="output"></pre>
         </div>
     </div>
+
+    <!-- AI Assistant Section -->
+    <div id="ai-assistant">
+        <h3>AI Assistant</h3>
+        <textarea id="assistant-input" placeholder="Ask the AI..."></textarea>
+        <button id="ask-ai-btn">Send</button>
+        <pre id="assistant-output">AI responses will appear here...</pre>
+    </div>
+
     <script>
+        // Run code button logic
         document.getElementById('run-btn').addEventListener('click', async () => {
             const code = document.getElementById('code-editor').value;
             const response = await fetch('/run_code', {
@@ -106,6 +155,18 @@ Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
             });
             const result = await response.json();
             document.getElementById('output').textContent = result.output || result.error;
+        });
+
+        // AI Assistant logic
+        document.getElementById('ask-ai-btn').addEventListener('click', async () => {
+            const userQuery = document.getElementById('assistant-input').value;
+            const response = await fetch('/ask_ai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: userQuery })
+            });
+            const result = await response.json();
+            document.getElementById('assistant-output').textContent = result.response || "No response.";
         });
     </script>
 </body>
