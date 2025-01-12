@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Editor</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Code Editor</h1>
+    <textarea id="code-editor" rows="15" cols="80">print("Hello, World!")</textarea>
+    <br>
+    <button id="run-btn">Run Code</button>
+    <pre id="output"></pre>
+    <script>
+        document.getElementById('run-btn').addEventListener('click', async () => {
+            const code = document.getElementById('code-editor').value;
+            const response = await fetch('/run_code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const result = await response.json();
+            document.getElementById('output').textContent = result.output || result.error;
+        });
+    </script>
+</body>
+</html>
