@@ -18,9 +18,15 @@ Evaluate the code based on correctness, efficiency, readability, scalability, an
 Be honest and critical, but also supportive—offer actionable steps for improvement and ask guiding questions to help the candidate think critically about their approach.
 """
 
-@app.route('/')
+# Pages 
+
+@app.route('/') #Eventually will be dashboard
 def home():
-    return render_template('editor.html')
+    return render_template('two_sum_editor.html')
+
+@app.route('/2')
+def reverse_string_page():
+    return render_template('reverse_string_editor.html')
 
 @app.route('/run_code', methods=['POST'])
 def run_code():

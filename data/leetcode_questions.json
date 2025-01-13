@@ -1,15 +1,44 @@
-{
-    "questions": [
-        {
-            "id": 1,
-            "title": "Two Sum",
-            "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to the target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
-            "sample_input": {
-                "nums": [2, 7, 11, 15],
-                "target": 9
-            },
-            "sample_output": [0, 1],
-            "explanation": "Because nums[0] + nums[1] == 9, we return [0, 1]."
-        }
+[
+  {
+    "id": 1,
+    "title": "Two Sum",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    "function_signature": "def two_sum(nums, target):",
+    "examples": [
+      {
+        "input": {
+          "nums": [2, 7, 11, 15],
+          "target": 9
+        },
+        "output": [0, 1]
+      },
+      {
+        "input": {
+          "nums": [3, 2, 4],
+          "target": 6
+        },
+        "output": [1, 2]
+      }
     ]
-}
+  },
+  {
+    "id": 2,
+    "title": "Reverse String",
+    "description": "Write a function that reverses a string.",
+    "function_signature": "def reverse_string(s):",
+    "examples": [
+      {
+        "input": {
+          "s": "hello"
+        },
+        "output": "olleh"
+      },
+      {
+        "input": {
+          "s": "Python"
+        },
+        "output": "nohtyP"
+      }
+    ]
+  }
+]
