@@ -46,7 +46,49 @@ Output: {{ example.output }}
     </div>
 
     <script>
-        // JavaScript logic for running code and interacting with Flask remains the same
+        // Run code logic
+        document.getElementById('run-btn').addEventListener('click', async () => {
+            const code = document.getElementById('code-editor').value;
+            try {
+                const response = await fetch('/run_code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const result = await response.json();
+                document.getElementById('output').textContent = result.output || result.error;
+            } catch (error) {
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Ask AI logic
+        document.getElementById('ask-ai-btn').addEventListener('click', async () => {
+            const query = document.getElementById('assistant-input').value;
+            const code = document.getElementById('code-editor').value;
+            const problemContext = document.querySelector('#question-section p').textContent;
+
+            try {
+                const response = await fetch('/ask_ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        code: code,
+                        problem_context: problemContext
+                    })
+                });
+                const result = await response.json();
+                document.getElementById('assistant-output').textContent = result.response || result.error;
+            } catch (error) {
+                document.getElementById('assistant-output').textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Get Summary logic
+        document.getElementById('get-summary-btn').addEventListener('click', () => {
+            window.location.href = '/';
+        });
     </script>
 </body>
 

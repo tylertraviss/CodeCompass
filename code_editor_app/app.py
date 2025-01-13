@@ -22,18 +22,15 @@ Be honest and critical, but also supportive—offer actionable steps for improve
 
 @app.route('/')
 def dashboard():
-    # Get the absolute path to the JSON file
-    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
+    # Load all questions from the JSON file
+    import os, json
+    base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
-    # Load all questions
-    try:
-        with open(json_path, 'r') as f:
-            questions = json.load(f)
-    except FileNotFoundError:
-        return "Questions file not found!", 404
+    with open(json_path, 'r') as f:
+        questions = json.load(f)
 
-    # Render the dashboard.html with the question list
+    # Render the dashboard with the list of questions
     return render_template('dashboard.html', questions=questions)
 
 @app.route('/question/<int:question_id>')
@@ -58,14 +55,6 @@ def question_page(question_id):
     # Render the editor.html template with the question data
     return render_template('editor.html', **question)
 
-
-@app.route("/two-sum")
-def twosum():
-    return render_template('two_sum_editor.html')
-
-@app.route('/reverse-string')
-def reverse_string_page():
-    return render_template('reverse_string_editor.html')
 
 @app.route('/run_code', methods=['POST'])
 def run_code():
@@ -165,7 +154,7 @@ Please help me understand how to approach this problem or improve my solution. I
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['GET'])
-def get_summary():
+def return_to_dashboard():
     # Generate or fetch a summary
     summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
     
