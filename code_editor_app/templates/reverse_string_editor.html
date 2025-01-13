@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeCompass AI</title>
+    <title>CodeCompass AI - Reverse String</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 
@@ -17,11 +17,9 @@
         <div id="question-section">
             <h2>Question: Reverse String</h2>
             <p>Write a function that reverses a string.</p>
-            <p>You may assume that each input would have exactly one solution, and you may not use the same element
-                twice.</p>
             <p>Example:</p>
             <pre>
-Input: s: "hello"
+Input: s = "hello"
 Output: "olleh"
             </pre>
         </div>
@@ -30,8 +28,11 @@ Output: "olleh"
         <div id="editor-section">
             <textarea id="code-editor">
 class Solution:
-    def reverse_string(s):
+    def reverseString(self, s):
         print("Write your code here!")
+
+sln = Solution()
+sln.reverseString("hello")
             </textarea>
             <button id="run-btn">Run Code</button>
             <pre id="output"></pre>
@@ -67,7 +68,7 @@ class Solution:
             // Get user input and code from the editor
             const query = document.getElementById('assistant-input').value;
             const code = document.getElementById('code-editor').value;
-            const problemContext = "Two Sum: Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to the target.";
+            const problemContext = "Reverse String: Write a function that reverses a string.";
 
             try {
                 // Make a POST request to the Flask `/ask_ai` endpoint
@@ -92,17 +93,8 @@ class Solution:
             }
         });
 
-
-        // Request Help logic
-        document.getElementById('request-help-btn').addEventListener('click', async () => {
-            const response = await fetch('/request_help', { method: 'POST' });
-            const result = await response.json();
-            document.getElementById('assistant-output').textContent = result.response;
-        });
-
         // Get Summary logic
         document.getElementById('get-summary-btn').addEventListener('click', async () => {
-            // Redirect to the /get_summary endpoint
             window.location.href = '/get_summary';
         });
     </script>
