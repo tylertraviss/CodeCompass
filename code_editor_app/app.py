@@ -39,7 +39,6 @@ def question_page(question_id):
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
-    # Load question data
     try:
         with open(json_path, 'r') as f:
             questions = json.load(f)
