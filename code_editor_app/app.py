@@ -24,11 +24,11 @@ Be honest and critical, but also supportive—offer actionable steps for improve
 def home():
     return "<h1> Hello <h1>"
 
-@app.route("/twosum")
+@app.route("/two-sum")
 def twosum():
     return render_template('two_sum_editor.html')
 
-@app.route('/reversestring')
+@app.route('/reverse-string')
 def reverse_string_page():
     return render_template('reverse_string_editor.html')
 
