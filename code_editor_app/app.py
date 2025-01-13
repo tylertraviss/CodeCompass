@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import subprocess
 from dotenv import load_dotenv
-import os
+import os, json
 import openai
 
 app = Flask(__name__)
@@ -20,9 +20,44 @@ Be honest and critical, but also supportive—offer actionable steps for improve
 
 # Pages 
 
-@app.route('/') #Eventually will be dashboard
-def home():
-    return "<h1> Hello <h1>"
+@app.route('/')
+def dashboard():
+    # Get the absolute path to the JSON file
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
+    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
+
+    # Load all questions
+    try:
+        with open(json_path, 'r') as f:
+            questions = json.load(f)
+    except FileNotFoundError:
+        return "Questions file not found!", 404
+
+    # Render the dashboard.html with the question list
+    return render_template('dashboard.html', questions=questions)
+
+@app.route('/question/<int:question_id>')
+def question_page(question_id):
+    # Get the absolute path to the JSON file
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
+    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
+
+    # Load question data
+    try:
+        with open(json_path, 'r') as f:
+            questions = json.load(f)
+    except FileNotFoundError:
+        return "Questions file not found!", 404
+
+    # Find the question by ID
+    question = next((q for q in questions if q['id'] == question_id), None)
+
+    if not question:
+        return "Question not found", 404
+
+    # Render the editor.html template with the question data
+    return render_template('editor.html', **question)
+
 
 @app.route("/two-sum")
 def twosum():

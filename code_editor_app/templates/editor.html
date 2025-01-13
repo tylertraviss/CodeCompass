@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCompass AI</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>CodeCompass AI</h1>
+    </header>
+    <div id="container">
+        <!-- Question Section -->
+        <div id="question-section">
+            <h2>Question: {{ title }}</h2>
+            <p>{{ description }}</p>
+            <p>Examples:</p>
+            <pre>
+{% for example in examples %}
+Input: {{ example.input }}
+Output: {{ example.output }}
+{% endfor %}
+            </pre>
+        </div>
+
+        <!-- Code Editor Section -->
+        <div id="editor-section">
+            <textarea id="code-editor">{{ function_signature }}</textarea>
+            <button id="run-btn">Run Code</button>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <!-- AI Assistant Section -->
+    <div id="ai-assistant">
+        <h3>Context for Technical Recruiter</h3>
+        <textarea id="assistant-input" placeholder="Talk to recruiter..."></textarea>
+        <div class="button-group">
+            <button id="ask-ai-btn" class="primary-btn">Talk to Technical Recruiter</button>
+            <button id="get-summary-btn" class="summary-btn">Dashboard</button>
+        </div>
+        <pre id="assistant-output">AI responses will appear here...</pre>
+    </div>
+
+    <script>
+        // JavaScript logic for running code and interacting with Flask remains the same
+    </script>
+</body>
+
+</html>
