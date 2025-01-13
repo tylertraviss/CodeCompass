@@ -72,15 +72,34 @@ sln.twoSum()
 
         // Ask AI logic
         document.getElementById('ask-ai-btn').addEventListener('click', async () => {
+            // Get user input and code from the editor
             const query = document.getElementById('assistant-input').value;
-            const response = await fetch('/ask_ai', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query })
-            });
-            const result = await response.json();
-            document.getElementById('assistant-output').textContent = result.response;
+            const code = document.getElementById('code-editor').value;
+            const problemContext = "Two Sum: Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to the target.";
+
+            try {
+                // Make a POST request to the Flask `/ask_ai` endpoint
+                const response = await fetch('/ask_ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: query,
+                        code: code,
+                        problem_context: problemContext
+                    })
+                });
+
+                // Parse the response JSON
+                const result = await response.json();
+
+                // Update the AI response text box
+                document.getElementById('assistant-output').textContent = result.response || result.error;
+            } catch (error) {
+                // Display an error if something goes wrong
+                document.getElementById('assistant-output').textContent = `Error: ${error.message}`;
+            }
         });
+
 
         // Request Help logic
         document.getElementById('request-help-btn').addEventListener('click', async () => {
