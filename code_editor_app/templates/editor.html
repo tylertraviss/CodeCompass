@@ -15,31 +15,20 @@
     <div id="container">
         <!-- Question Section -->
         <div id="question-section">
-            <h2>Question: Two Sum</h2>
-            <p>Given an array of integers nums and an integer target, return indices of the two numbers such that they
-                add up to the target.</p>
-            <p>You may assume that each input would have exactly one solution, and you may not use the same element
-                twice.</p>
-            <p>Example:</p>
+            <h2>Question: {{ title }}</h2>
+            <p>{{ description }}</p>
+            <p>Examples:</p>
             <pre>
-Input: nums = [2, 7, 11, 15], target = 9
-Output: [0, 1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+{% for example in examples %}
+Input: {{ example.input }}
+Output: {{ example.output }}
+{% endfor %}
             </pre>
         </div>
 
         <!-- Code Editor Section -->
         <div id="editor-section">
-            <textarea id="code-editor">
-class Solution:
-    def twoSum(self, lst, target):
-       print("Write your code here!")
-
-
-
-sln = Solution()
-sln.twoSum(lst = [2, 7, 11, 15], target = 9)
-            </textarea>
+            <textarea id="code-editor">{{ function_signature }}</textarea>
             <button id="run-btn">Run Code</button>
             <pre id="output"></pre>
         </div>
@@ -51,7 +40,7 @@ sln.twoSum(lst = [2, 7, 11, 15], target = 9)
         <textarea id="assistant-input" placeholder="Talk to recruiter..."></textarea>
         <div class="button-group">
             <button id="ask-ai-btn" class="primary-btn">Talk to Technical Recruiter</button>
-            <button id="get-summary-btn" class="summary-btn">Feedback Afterwords</button>
+            <button id="get-summary-btn" class="summary-btn">Dashboard</button>
         </div>
         <pre id="assistant-output">AI responses will appear here...</pre>
     </div>
@@ -60,24 +49,26 @@ sln.twoSum(lst = [2, 7, 11, 15], target = 9)
         // Run code logic
         document.getElementById('run-btn').addEventListener('click', async () => {
             const code = document.getElementById('code-editor').value;
-            const response = await fetch('/run_code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code })
-            });
-            const result = await response.json();
-            document.getElementById('output').textContent = result.output || result.error;
+            try {
+                const response = await fetch('/run_code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const result = await response.json();
+                document.getElementById('output').textContent = result.output || result.error;
+            } catch (error) {
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
         });
 
         // Ask AI logic
         document.getElementById('ask-ai-btn').addEventListener('click', async () => {
-            // Get user input and code from the editor
             const query = document.getElementById('assistant-input').value;
             const code = document.getElementById('code-editor').value;
-            const problemContext = "Two Sum: Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to the target.";
+            const problemContext = document.querySelector('#question-section p').textContent;
 
             try {
-                // Make a POST request to the Flask `/ask_ai` endpoint
                 const response = await fetch('/ask_ai', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -87,30 +78,16 @@ sln.twoSum(lst = [2, 7, 11, 15], target = 9)
                         problem_context: problemContext
                     })
                 });
-
-                // Parse the response JSON
                 const result = await response.json();
-
-                // Update the AI response text box
                 document.getElementById('assistant-output').textContent = result.response || result.error;
             } catch (error) {
-                // Display an error if something goes wrong
                 document.getElementById('assistant-output').textContent = `Error: ${error.message}`;
             }
         });
 
-
-        // Request Help logic
-        document.getElementById('request-help-btn').addEventListener('click', async () => {
-            const response = await fetch('/request_help', { method: 'POST' });
-            const result = await response.json();
-            document.getElementById('assistant-output').textContent = result.response;
-        });
-
         // Get Summary logic
-        document.getElementById('get-summary-btn').addEventListener('click', async () => {
-            // Redirect to the /get_summary endpoint
-            window.location.href = '/get_summary';
+        document.getElementById('get-summary-btn').addEventListener('click', () => {
+            window.location.href = '/';
         });
     </script>
 </body>

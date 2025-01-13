@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import subprocess
 from dotenv import load_dotenv
-import os
+import os, json
 import openai
 
 app = Flask(__name__)
@@ -18,9 +18,43 @@ Evaluate the code based on correctness, efficiency, readability, scalability, an
 Be honest and critical, but also supportive—offer actionable steps for improvement and ask guiding questions to help the candidate think critically about their approach.
 """
 
+# Pages 
+
 @app.route('/')
-def home():
-    return render_template('editor.html')
+def dashboard():
+    # Load all questions from the JSON file
+    import os, json
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
+
+    with open(json_path, 'r') as f:
+        questions = json.load(f)
+
+    # Render the dashboard with the list of questions
+    return render_template('dashboard.html', questions=questions)
+
+@app.route('/question/<int:question_id>')
+def question_page(question_id):
+    # Get the absolute path to the JSON file
+    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
+    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
+
+    # Load question data
+    try:
+        with open(json_path, 'r') as f:
+            questions = json.load(f)
+    except FileNotFoundError:
+        return "Questions file not found!", 404
+
+    # Find the question by ID
+    question = next((q for q in questions if q['id'] == question_id), None)
+
+    if not question:
+        return "Question not found", 404
+
+    # Render the editor.html template with the question data
+    return render_template('editor.html', **question)
+
 
 @app.route('/run_code', methods=['POST'])
 def run_code():
@@ -120,7 +154,7 @@ Please help me understand how to approach this problem or improve my solution. I
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['GET'])
-def get_summary():
+def return_to_dashboard():
     # Generate or fetch a summary
     summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
     

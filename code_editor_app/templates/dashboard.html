@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCompass Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>CodeCompass AI - Dashboard</h1>
+    </header>
+    <div id="container">
+        <h2>Select a Question:</h2>
+        <ul>
+            {% for question in questions %}
+            <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+</html>
