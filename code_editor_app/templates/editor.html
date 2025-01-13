@@ -110,9 +110,8 @@ sln.twoSum(lst = [2, 7, 11, 15], target = 9)
 
         // Get Summary logic
         document.getElementById('get-summary-btn').addEventListener('click', async () => {
-            const response = await fetch('/get_summary', { method: 'POST' });
-            const result = await response.json();
-            document.getElementById('assistant-output').textContent = result.response;
+            // Redirect to the /get_summary endpoint
+            window.location.href = '/get_summary';
         });
     </script>
 </body>

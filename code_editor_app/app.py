@@ -119,9 +119,13 @@ Please help me understand how to approach this problem or improve my solution. I
     except Exception as e:
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
-@app.route('/get_summary', methods=['POST'])
+@app.route('/get_summary', methods=['GET'])
 def get_summary():
-    return jsonify({'response': "Here’s a summary of your progress."})
+    # Generate or fetch a summary
+    summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
+    
+    # Render the summary page with the summary injected
+    return render_template('summary.html', summary=summary)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
