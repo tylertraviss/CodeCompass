@@ -22,9 +22,13 @@ Be honest and critical, but also supportive—offer actionable steps for improve
 
 @app.route('/') #Eventually will be dashboard
 def home():
+    return "<h1> Hello <h1>"
+
+@app.route("/twosum")
+def twosum():
     return render_template('two_sum_editor.html')
 
-@app.route('/2')
+@app.route('/reversestring')
 def reverse_string_page():
     return render_template('reverse_string_editor.html')
 
