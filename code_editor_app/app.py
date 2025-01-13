@@ -78,7 +78,45 @@ Keep the message to a few sentences. Talk about the solution so far, what you li
 
 @app.route('/request_help', methods=['POST'])
 def request_help():
-    return jsonify({'response': "Here's some help with your code!"})
+    # Fetch user inputs
+    query = request.json.get('query', '')
+    code = request.json.get('code', '')
+    problem_context = request.json.get('problem_context', '')
+
+    # Combine static context with user-specific data
+    messages = [
+        {"role": "system", "content": """
+You are an AI assistant providing helpful hints and guidance to a candidate solving a coding problem.
+Be informative and offer explanations to help the candidate improve their understanding.
+If explicitly asked for the answer, provide hints rather than the full solution, nudging them in the right direction.
+Your tone should be kind, encouraging, and focused on teaching.
+"""},
+        {"role": "user", "content": f"""
+### Problem:
+{problem_context}
+
+### Candidate's Code:
+{code}
+
+### Candidate's Query:
+{query}
+
+Please help me understand how to approach this problem or improve my solution. If I explicitly ask for the answer, guide me toward it without directly providing it.
+        """}
+    ]
+
+    try:
+        # Use ChatCompletion API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Or "gpt-4" if available
+            messages=messages,
+            max_tokens=500,
+            temperature=0.7
+        )
+        help_response = response['choices'][0]['message']['content'].strip()
+        return jsonify({'response': help_response})
+    except Exception as e:
+        return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['POST'])
 def get_summary():
