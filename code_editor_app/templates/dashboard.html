@@ -34,13 +34,16 @@
     <div id="container">
     </div>
 
-            <center>
-                {% for question in questions %}
-                <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
-                {% endfor %}
-                </ul>
-            </center>
-            <ul>
+    <center>
+        <div class="list-group">
+            {% for question in questions %}
+            <a href="/question/{{ question.id }}" class="list-group-item list-group-item-action">
+                {{ question.title }}
+            </a>
+            {% endfor %}
+        </div>
+    </center>
+            
 
 </body>
 

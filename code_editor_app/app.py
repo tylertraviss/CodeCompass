@@ -33,6 +33,10 @@ def dashboard():
     # Render the dashboard with the list of questions
     return render_template('dashboard.html', questions=questions)
 
+@app.route('/about')
+def about_us_page():
+    return "<h1> About us page! </h1>"
+
 @app.route('/question/<int:question_id>')
 def question_page(question_id):
     # Get the absolute path to the JSON file
