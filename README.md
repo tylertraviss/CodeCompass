@@ -66,11 +66,7 @@ As we continue to enhance **CodeCompass**, here are some planned improvements:
 
 ## Preview
 
-### Dashboard View
-![Dashboard](./codecompass-dashboard.png)
 
-### Example Question Assistance
-![CodeCompass Question Example](./codecompass-question-example.png)
 
 --- 
 
