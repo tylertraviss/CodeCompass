@@ -24,14 +24,26 @@ Routes:
 Attributes:
     - `app (Flask)`: The Flask application instance.
     - `STATIC_CONTEXT (str)`: Predefined AI system prompt for technical recruiter interactions.
-
 """
 
+import logging
 from flask import Flask, render_template, request, jsonify
 import subprocess
 from dotenv import load_dotenv
 import os, json
 import openai
+
+# Configure Logging
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),  # Log to a file named app.log
+        logging.StreamHandler()         # Also log to the console
+    ]
+)
+
+logger = logging.getLogger(__name__)  # Create a logger for the application
 
 app = Flask(__name__)
 
@@ -55,11 +67,17 @@ def dashboard():
     Returns:
         str: Rendered HTML template with a list of questions from `leetcode_questions.json`.
     """
+    logger.info("Loading dashboard...")
     base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
-    with open(json_path, 'r') as f:
-        questions = json.load(f)
+    try:
+        with open(json_path, 'r') as f:
+            questions = json.load(f)
+        logger.info("Successfully loaded questions from leetcode_questions.json")
+    except FileNotFoundError as e:
+        logger.error(f"Failed to load questions: {e}")
+        return "Questions file not found!", 404
 
     return render_template('dashboard.html', questions=questions)
 
@@ -71,6 +89,7 @@ def about_us_page():
     Returns:
         str: HTML string for the About Us page.
     """
+    logger.info("Accessed the About Us page.")
     return "<h1> About us page! </h1>"
 
 @app.route('/question/<int:question_id>')
@@ -84,19 +103,21 @@ def question_page(question_id):
     Returns:
         str: Rendered HTML template for the coding question and editor.
     """
+    logger.info(f"Loading question with ID: {question_id}")
     base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
     try:
         with open(json_path, 'r') as f:
             questions = json.load(f)
-    except FileNotFoundError:
+        question = next((q for q in questions if q['id'] == question_id), None)
+        if not question:
+            logger.warning(f"Question with ID {question_id} not found.")
+            return "Question not found", 404
+        logger.info(f"Successfully loaded question: {question['title']}")
+    except FileNotFoundError as e:
+        logger.error(f"Failed to load questions file: {e}")
         return "Questions file not found!", 404
-
-    question = next((q for q in questions if q['id'] == question_id), None)
-
-    if not question:
-        return "Question not found", 404
 
     return render_template('editor.html', **question)
 
@@ -109,6 +130,7 @@ def run_code():
         dict: Output or error message from the code execution.
     """
     code = request.json.get('code', '')
+    logger.info("Executing user-submitted code.")
     try:
         result = subprocess.run(
             ['python3', '-c', code],
@@ -116,8 +138,10 @@ def run_code():
             text=True,
             timeout=5
         )
+        logger.info("Code executed successfully.")
         return jsonify({'output': result.stdout, 'error': result.stderr})
     except Exception as e:
+        logger.error(f"Code execution failed: {e}")
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])
@@ -132,6 +156,7 @@ def talk_to_recruiter():
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
+    logger.info("Processing AI recruiter feedback.")
     messages = [
         {"role": "system", "content": STATIC_CONTEXT},
         {"role": "user", "content": f"""
@@ -154,8 +179,10 @@ def talk_to_recruiter():
             temperature=0.7
         )
         recruiter_feedback = response['choices'][0]['message']['content'].strip()
+        logger.info("Successfully fetched AI feedback.")
         return jsonify({'response': recruiter_feedback})
     except Exception as e:
+        logger.error(f"OpenAI API error: {e}")
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/request_help', methods=['POST'])
@@ -170,6 +197,7 @@ def request_help():
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
+    logger.info("Processing help request.")
     messages = [
         {"role": "system", "content": """
 You are an AI assistant providing helpful hints and guidance to a candidate solving a coding problem.
@@ -197,8 +225,10 @@ Your tone should be kind, encouraging, and focused on teaching.
             temperature=0.7
         )
         help_response = response['choices'][0]['message']['content'].strip()
+        logger.info("Successfully processed help request.")
         return jsonify({'response': help_response})
     except Exception as e:
+        logger.error(f"OpenAI API error: {e}")
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['GET'])
@@ -209,8 +239,10 @@ def return_to_dashboard():
     Returns:
         str: Rendered HTML template with the summary of progress.
     """
+    logger.info("Generating user summary.")
     summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
     return render_template('summary.html', summary=summary)
 
 if __name__ == '__main__':
+    logger.info("Starting the Flask application...")
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
