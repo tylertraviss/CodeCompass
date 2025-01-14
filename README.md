@@ -1,6 +1,6 @@
 # CodeCompass
 
-**CodeCompass** is an AI-powered LeetCode assistant designed to help users solve coding problems more efficiently. Built using Python and Flask, it provides real-time solutions, detailed explanations, all through a user-friendly web interface.
+**CodeCompass** is an AI-powered LeetCode assistant designed to help users solve coding problems more efficiently. Built using Python and Flask, it provides real-time solutions, detailed explanations, all through a user-friendly web interface. 
 
 Made for Nosu Hackathon. What a fun opportunity to practice my skillset.
 
@@ -35,38 +35,42 @@ Our primary goal for the hackathon is to deliver a functional prototype of **Cod
 
 ## Future Improvements
 
-As we continue to enhance **CodeCompass**, here are some planned improvements:
+As we continue to enhance **CodeCompass**, here are some planned improvements (by priority):
 
 1. **LeetCode API Integration**:
    - Automate fetching all LeetCode questions, including problem details, tags, and difficulty levels.
    - Keep the question database up to date with the latest additions and updates from LeetCode.
+   - 50+ tests per application. Right now, single-handly verifying one.
 
 2. **User Progress Tracking**:
    - Implement user authentication and profiles.
    - Track individual progress, including solved questions, success rates, and time spent on problems.
    - Provide personalized recommendations based on user performance and history.
 
-3. **Enhanced AI Capabilities**:
-   - Offer step-by-step debugging and explanations for submitted solutions.
-   - Expand AI support to cover more complex algorithms and problem-solving techniques.
-
-4. **Leaderboard and Community Features**:
+3. **Leaderboard and Community Features**:
    - Add global and friend-specific leaderboards to foster healthy competition.
    - Create a community forum for users to discuss solutions, share tips, and collaborate.
 
-5. **Performance Optimizations**:
+4. **Performance Optimizations**:
    - Improve backend scalability to handle higher user loads seamlessly.
    - Optimize response times for real-time AI assistance.
 
-6. **Mobile-Friendly Design**:
+5. **Mobile-Friendly Design**:
    - Develop a responsive interface to ensure smooth usability on both desktop and mobile devices.
 
-7. **Gamification**:
+6. **Gamification**:
    - Introduce badges, achievements, and streaks to keep users motivated and engaged.
 
 ## Preview
 
+In this image, the user is starting their question, receiving guidance from the technical recruiter.
 
+![Starting Question](images/starting-question.png)
+
+Here, the user is complete the question and feedback is given. The user also compiles and
+the results of the test cases are compiled.
+
+![Completing Question](images/completed-question.png)
 
 --- 
 
