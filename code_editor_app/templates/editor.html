@@ -39,7 +39,7 @@
             <p>Examples:</p>
             <pre>
 {% for example in examples %}
-Input: {{ example.input }}
+Input: {{ example.input.split('=', 1)[1] | trim }}
 Output: {{ example.output }}
 {% endfor %}
             </pre>
