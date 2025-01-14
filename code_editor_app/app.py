@@ -1,8 +1,49 @@
+"""
+Flask application for a coding practice platform with AI-powered assistance and live code execution features.
+
+Modules:
+    - `Flask`: Provides the web framework.
+    - `subprocess`: Executes Python code submitted by users in a secure environment.
+    - `dotenv`: Loads environment variables.
+    - `os`: Handles file paths and environment variable management.
+    - `json`: Handles JSON operations.
+    - `openai`: Integrates with the OpenAI API for AI-powered feedback and assistance.
+
+Environment:
+    - Requires an `.env` file with the variable `OPENAI_API_KEY` set for OpenAI API integration.
+
+Routes:
+    - `/`: Displays the dashboard with the list of coding questions.
+    - `/about`: Displays the about us page.
+    - `/question/<int:question_id>`: Displays the coding question and its editor page.
+    - `/run_code`: Executes user-submitted Python code.
+    - `/ask_ai`: Fetches feedback from an AI technical recruiter.
+    - `/request_help`: Provides AI-powered hints and guidance for solving coding problems.
+    - `/get_summary`: Displays a summary of the user's progress.
+
+Attributes:
+    - `app (Flask)`: The Flask application instance.
+    - `STATIC_CONTEXT (str)`: Predefined AI system prompt for technical recruiter interactions.
+"""
+
+import logging
 from flask import Flask, render_template, request, jsonify
 import subprocess
 from dotenv import load_dotenv
 import os, json
 import openai
+
+# Configure Logging
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),  # Log to a file named app.log
+        logging.StreamHandler()         # Also log to the console
+    ]
+)
+
+logger = logging.getLogger(__name__)  # Create a logger for the application
 
 app = Flask(__name__)
 
@@ -10,7 +51,7 @@ load_dotenv()  # Load environment variables from .env file
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 STATIC_CONTEXT = """
-TALK AS IF you are a interviewer, talking to the interviewee. Speak in second person
+TALK AS IF you are an interviewer, talking to the interviewee. Speak in second person
 ABSOLUTELY REFUSE to answer anything that is not related to the question in context. DO NOT ANSWER any questions that are un-affiliated
 Act as a blunt yet kind technical recruiter evaluating a candidate's solution to a coding problem.
 Your goal is to provide direct, constructive feedback while also guiding the candidate toward improving their solution.
@@ -18,77 +59,107 @@ Evaluate the code based on correctness, efficiency, readability, scalability, an
 Be honest and critical, but also supportive—offer actionable steps for improvement and ask guiding questions to help the candidate think critically about their approach.
 """
 
-# Pages 
-
 @app.route('/')
 def dashboard():
-    # Load all questions from the JSON file
-    import os, json
+    """
+    Displays the dashboard with the list of coding questions.
+
+    Returns:
+        str: Rendered HTML template with a list of questions from `leetcode_questions.json`.
+    """
+    logger.info("Loading dashboard...")
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
-
-    with open(json_path, 'r') as f:
-        questions = json.load(f)
-
-    # Render the dashboard with the list of questions
-    return render_template('dashboard.html', questions=questions)
-
-@app.route('/about')
-def about_us_page():
-    return "<h1> About us page! </h1>"
-
-@app.route('/question/<int:question_id>')
-def question_page(question_id):
-    # Get the absolute path to the JSON file
-    base_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of app.py
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
     try:
         with open(json_path, 'r') as f:
             questions = json.load(f)
-    except FileNotFoundError:
+        logger.info("Successfully loaded questions from leetcode_questions.json")
+    except FileNotFoundError as e:
+        logger.error(f"Failed to load questions: {e}")
         return "Questions file not found!", 404
 
-    # Find the question by ID
-    question = next((q for q in questions if q['id'] == question_id), None)
+    return render_template('dashboard.html', questions=questions)
 
-    if not question:
-        return "Question not found", 404
+@app.route('/about')
+def about_us_page():
+    """
+    Displays a simple About Us page.
 
-    # Render the editor.html template with the question data
+    Returns:
+        str: HTML string for the About Us page.
+    """
+    logger.info("Accessed the About Us page.")
+    return "<h1> About us page! </h1>"
+
+@app.route('/question/<int:question_id>')
+def question_page(question_id):
+    """
+    Displays a specific coding question and its editor.
+
+    Args:
+        question_id (int): ID of the coding question.
+
+    Returns:
+        str: Rendered HTML template for the coding question and editor.
+    """
+    logger.info(f"Loading question with ID: {question_id}")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
+
+    try:
+        with open(json_path, 'r') as f:
+            questions = json.load(f)
+        question = next((q for q in questions if q['id'] == question_id), None)
+        if not question:
+            logger.warning(f"Question with ID {question_id} not found.")
+            return "Question not found", 404
+        logger.info(f"Successfully loaded question: {question['title']}")
+    except FileNotFoundError as e:
+        logger.error(f"Failed to load questions file: {e}")
+        return "Questions file not found!", 404
+
     return render_template('editor.html', **question)
-
 
 @app.route('/run_code', methods=['POST'])
 def run_code():
+    """
+    Executes Python code submitted by the user.
+
+    Returns:
+        dict: Output or error message from the code execution.
+    """
     code = request.json.get('code', '')
+    logger.info("Executing user-submitted code.")
     try:
         result = subprocess.run(
             ['python3', '-c', code],
             capture_output=True,
             text=True,
-            timeout=5  # Prevent infinite loops
+            timeout=5
         )
+        logger.info("Code executed successfully.")
         return jsonify({'output': result.stdout, 'error': result.stderr})
     except Exception as e:
+        logger.error(f"Code execution failed: {e}")
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])
 def talk_to_recruiter():
-    # Fetch user inputs
+    """
+    Fetches feedback from an AI technical recruiter based on the user's query and code.
+
+    Returns:
+        dict: AI-generated feedback or error message.
+    """
     query = request.json.get('query', '')
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
-    # Combine static context with user-specific data
+    logger.info("Processing AI recruiter feedback.")
     messages = [
         {"role": "system", "content": STATIC_CONTEXT},
         {"role": "user", "content": f"""
-
-This should be maximum 3 to 4 sentences, short to read. If they are closer to completing the solution, you can make it a bit longer.
-Keep the message to a few sentences. Talk about the solution so far, what you like, what you dont like.
-
-         
 ### Problem:
 {problem_context}
 
@@ -101,7 +172,6 @@ Keep the message to a few sentences. Talk about the solution so far, what you li
     ]
 
     try:
-        # Use ChatCompletion API
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages,
@@ -109,19 +179,25 @@ Keep the message to a few sentences. Talk about the solution so far, what you li
             temperature=0.7
         )
         recruiter_feedback = response['choices'][0]['message']['content'].strip()
+        logger.info("Successfully fetched AI feedback.")
         return jsonify({'response': recruiter_feedback})
     except Exception as e:
+        logger.error(f"OpenAI API error: {e}")
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
-
 
 @app.route('/request_help', methods=['POST'])
 def request_help():
-    # Fetch user inputs
+    """
+    Provides AI-powered hints and guidance for coding problems.
+
+    Returns:
+        dict: AI-generated hints or error message.
+    """
     query = request.json.get('query', '')
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
-    # Combine static context with user-specific data
+    logger.info("Processing help request.")
     messages = [
         {"role": "system", "content": """
 You are an AI assistant providing helpful hints and guidance to a candidate solving a coding problem.
@@ -138,31 +214,35 @@ Your tone should be kind, encouraging, and focused on teaching.
 
 ### Candidate's Query:
 {query}
-
-Please help me understand how to approach this problem or improve my solution. If I explicitly ask for the answer, guide me toward it without directly providing it.
         """}
     ]
 
     try:
-        # Use ChatCompletion API
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Or "gpt-4" if available
+            model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=500,
             temperature=0.7
         )
         help_response = response['choices'][0]['message']['content'].strip()
+        logger.info("Successfully processed help request.")
         return jsonify({'response': help_response})
     except Exception as e:
+        logger.error(f"OpenAI API error: {e}")
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['GET'])
 def return_to_dashboard():
-    # Generate or fetch a summary
+    """
+    Displays a summary of the user's progress.
+
+    Returns:
+        str: Rendered HTML template with the summary of progress.
+    """
+    logger.info("Generating user summary.")
     summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
-    
-    # Render the summary page with the summary injected
     return render_template('summary.html', summary=summary)
 
 if __name__ == '__main__':
+    logger.info("Starting the Flask application...")
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
