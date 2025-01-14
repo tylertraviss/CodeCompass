@@ -181,3 +181,17 @@ pre {
     margin-bottom: 20px;
     /* Adjust spacing between sections */
 }
+
+#assistant-input {
+    height: 100px;
+    /* Adjust height for smaller recruiter textbox */
+    resize: none;
+    /* Disable resizing for cleaner layout */
+}
+
+#code-editor {
+    height: 450px;
+    /* Adjust height for larger code editor */
+    resize: vertical;
+    /* Allow vertical resizing only */
+}

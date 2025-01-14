@@ -42,7 +42,7 @@ Output: {{ example.output }}
 
                 <!-- AI Assistant Section (directly under examples) -->
                 <h3>Context for Technical Recruiter</h3>
-                <textarea id="assistant-input" placeholder="Talk to recruiter..." class="form-control mb-2"></textarea>
+                <textarea id="assistant-input" placeholder="Talk to recruiter..." class="form-control mb-2" rows="3"></textarea>
                 <div class="d-flex gap-2">
                     <button id="ask-ai-btn" class="btn btn-success">Talk to Technical Recruiter</button>
                     <button id="get-summary-btn" class="btn btn-primary">Dashboard</button>
@@ -56,7 +56,7 @@ Output: {{ example.output }}
             <div class="col-md-6">
                 <!-- Code Editor Section -->
                 <div id="editor-section">
-                    <textarea id="code-editor" class="form-control" rows="10">{{ function_signature }}</textarea>
+                    <textarea id="code-editor" class="form-control" rows="20">{{ function_signature }}</textarea>
                     <button id="run-btn" class="btn btn-dark mt-3">Run Code</button>
                     <pre id="output" class="mt-3">Output will appear here...</pre>
                 </div>
