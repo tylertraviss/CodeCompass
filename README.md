@@ -64,7 +64,15 @@ As we continue to enhance **CodeCompass**, here are some planned improvements:
 7. **Gamification**:
    - Introduce badges, achievements, and streaks to keep users motivated and engaged.
 
----
+## Preview
+
+### Dashboard View
+![Dashboard](./codecompass-dashboard.png)
+
+### Example Question Assistance
+![CodeCompass Question Example](./codecompass-question-example.png)
+
+--- 
 
 These enhancements aim to make **CodeCompass** an indispensable tool for LeetCode enthusiasts, competitive programmers, and anyone looking to improve their problem-solving skills.
 
