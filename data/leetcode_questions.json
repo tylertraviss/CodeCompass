@@ -158,5 +158,166 @@
                 "output": "5"
             }
         ]
+    },
+
+    {
+        "id": 11,
+        "title": "Roman to Integer",
+        "description": "Convert a Roman numeral to an integer.",
+        "function_signature": "def roman_to_int(s):",
+        "examples": [
+            {
+                "input": "output = roman_to_int('III')",
+                "output": "3"
+            },
+            {
+                "input": "output = roman_to_int('IX')",
+                "output": "9"
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "title": "Integer to Roman",
+        "description": "Convert an integer to a Roman numeral.",
+        "function_signature": "def int_to_roman(num):",
+        "examples": [
+            {
+                "input": "output = int_to_roman(3)",
+                "output": "'III'"
+            },
+            {
+                "input": "output = int_to_roman(58)",
+                "output": "'LVIII'"
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "title": "Container With Most Water",
+        "description": "Find two lines that together with the x-axis form a container such that it contains the most water.",
+        "function_signature": "def max_area(height):",
+        "examples": [
+            {
+                "input": "output = max_area([1, 8, 6, 2, 5, 4, 8, 3, 7])",
+                "output": "49"
+            },
+            {
+                "input": "output = max_area([1, 1])",
+                "output": "1"
+            }
+        ]
+    },
+    {
+        "id": 14,
+        "title": "Generate Parentheses",
+        "description": "Given n pairs of parentheses, generate all valid combinations of well-formed parentheses.",
+        "function_signature": "def generate_parenthesis(n):",
+        "examples": [
+            {
+                "input": "output = generate_parenthesis(3)",
+                "output": "['((()))', '(()())', '(())()', '()(())', '()()()']"
+            },
+            {
+                "input": "output = generate_parenthesis(1)",
+                "output": "['()']"
+            }
+        ]
+    },
+    {
+        "id": 15,
+        "title": "3Sum",
+        "description": "Given an integer array nums, find all unique triplets that sum up to zero.",
+        "function_signature": "def three_sum(nums):",
+        "examples": [
+            {
+                "input": "output = three_sum([-1, 0, 1, 2, -1, -4])",
+                "output": "[[-1, -1, 2], [-1, 0, 1]]"
+            },
+            {
+                "input": "output = three_sum([])",
+                "output": "[]"
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "title": "Letter Combinations of a Phone Number",
+        "description": "Given a string containing digits from 2-9 inclusive, return all possible letter combinations.",
+        "function_signature": "def letter_combinations(digits):",
+        "examples": [
+            {
+                "input": "output = letter_combinations('23')",
+                "output": "['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']"
+            },
+            {
+                "input": "output = letter_combinations('')",
+                "output": "[]"
+            }
+        ]
+    },
+    {
+        "id": 17,
+        "title": "Unique Paths",
+        "description": "A robot is located at the top-left corner of a grid. Find the number of unique paths to reach the bottom-right corner.",
+        "function_signature": "def unique_paths(m, n):",
+        "examples": [
+            {
+                "input": "output = unique_paths(3, 7)",
+                "output": "28"
+            },
+            {
+                "input": "output = unique_paths(3, 2)",
+                "output": "3"
+            }
+        ]
+    },
+    {
+        "id": 18,
+        "title": "Word Search",
+        "description": "Given a grid and a word, determine if the word exists in the grid.",
+        "function_signature": "def exist(board, word):",
+        "examples": [
+            {
+                "input": "output = exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'ABCCED')",
+                "output": "True"
+            },
+            {
+                "input": "output = exist([['A','B','C','E'],['S','F','C','S'],['A','D','E','E']], 'SEE')",
+                "output": "True"
+            }
+        ]
+    },
+    {
+        "id": 19,
+        "title": "Combination Sum",
+        "description": "Given an array of distinct integers, return all unique combinations that sum up to a target.",
+        "function_signature": "def combination_sum(candidates, target):",
+        "examples": [
+            {
+                "input": "output = combination_sum([2, 3, 6, 7], 7)",
+                "output": "[[2, 2, 3], [7]]"
+            },
+            {
+                "input": "output = combination_sum([2, 3, 5], 8)",
+                "output": "[[2, 2, 2, 2], [2, 3, 3], [3, 5]]"
+            }
+        ]
+    },
+    {
+        "id": 20,
+        "title": "Rotate Image",
+        "description": "Given an n x n 2D matrix, rotate it 90 degrees clockwise.",
+        "function_signature": "def rotate(matrix):",
+        "examples": [
+            {
+                "input": "output = rotate([[1, 2, 3], [4, 5, 6], [7, 8, 9]])",
+                "output": "[[7, 4, 1], [8, 5, 2], [9, 6, 3]]"
+            },
+            {
+                "input": "output = rotate([[5, 1, 9, 11], [2, 4, 8, 10], [13, 3, 6, 7], [15, 14, 12, 16]])",
+                "output": "[[15, 13, 2, 5], [14, 3, 4, 1], [12, 6, 8, 9], [16, 7, 10, 11]]"
+            }
+        ]
     }
 ]
