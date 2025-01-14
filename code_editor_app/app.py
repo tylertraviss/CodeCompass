@@ -35,7 +35,7 @@ def dashboard():
 
 @app.route('/about')
 def about_us_page():
-    return "<h1> About us page! </h1>"
+    return render_template('about_us.html')
 
 @app.route('/question/<int:question_id>')
 def question_page(question_id):
