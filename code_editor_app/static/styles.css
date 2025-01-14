@@ -183,7 +183,7 @@ pre {
 }
 
 #assistant-input {
-    height: 100px;
+    height: 85px;
     /* Adjust height for smaller recruiter textbox */
     resize: none;
     /* Disable resizing for cleaner layout */
