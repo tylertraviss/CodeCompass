@@ -71,6 +71,9 @@ Output: {{ example.output }}
         const testInput = "{{ examples[0].input }}"; // Test input
         const expectedOutput = "{{ examples[0].output }}"; // Expected output
 
+        // Extract everything after the '=' from testInput
+        const parsedTestInput = testInput.split('=').slice(1).join('=').trim();
+
         try {
             const response = await fetch('/run_code', {
                 method: 'POST',
@@ -88,7 +91,7 @@ Output: {{ example.output }}
                 outputSection.textContent = `Error: ${result.error}`;
             } else {
                 outputSection.innerHTML = `
-                <p><b>Test Input:</b> ${testInput}</p>
+                <p><b>Test Input:</b> ${parsedTestInput}</p>
                 <p><b>Expected Output:</b> ${expectedOutput}</p>
                 <p><b>Actual Output:</b> ${result.actual_output}</p>
                 <p><b>Result:</b> ${result.correct ? '✅ Passed' : '❌ Failed'}</p>
