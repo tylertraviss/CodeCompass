@@ -32,13 +32,16 @@
     </nav>
 
     <div id="container">
-        <h2>Select a Question:</h2>
-        <ul>
-            {% for question in questions %}
-            <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
-            {% endfor %}
-        </ul>
     </div>
+
+            <center>
+                {% for question in questions %}
+                <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
+                {% endfor %}
+                </ul>
+            </center>
+            <ul>
+
 </body>
 
 </html>
