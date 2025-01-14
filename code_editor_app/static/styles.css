@@ -150,3 +150,48 @@ pre {
     font-weight: bold;
     /* Make text bold */
 }
+
+/* Adjust the output section styling */
+#output {
+    padding: 10px;
+    /* Reduce padding inside the output box */
+    margin: 10px 0;
+    /* Reduce the margin around the output box */
+    font-size: 14px;
+    /* Adjust the font size for more compact text */
+    line-height: 0.1;
+    /* Adjust line height for closer spacing */
+    border: 1px solid #ccc;
+    /* Optional: Add a border for clarity */
+    border-radius: 5px;
+    /* Optional: Slight rounding of corners */
+    background-color: #f9f9f9;
+    /* Optional: Light background for better readability */
+}
+
+/* Make sure any paragraphs inside the output have minimal margin */
+#output p {
+    margin: 5px 0;
+    /* Reduce margin between lines */
+}
+
+/* Adjust the container spacing if needed */
+#editor-section,
+#ai-assistant {
+    margin-bottom: 20px;
+    /* Adjust spacing between sections */
+}
+
+#assistant-input {
+    height: 85px;
+    /* Adjust height for smaller recruiter textbox */
+    resize: none;
+    /* Disable resizing for cleaner layout */
+}
+
+#code-editor {
+    height: 450px;
+    /* Adjust height for larger code editor */
+    resize: vertical;
+    /* Allow vertical resizing only */
+}

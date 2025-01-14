@@ -51,13 +51,13 @@ load_dotenv()  # Load environment variables from .env file
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 STATIC_CONTEXT = """
-TALK AS IF you are an interviewer, talking to the interviewee. Speak in second person
-ABSOLUTELY REFUSE to answer anything that is not related to the question in context. DO NOT ANSWER any questions that are un-affiliated
-Act as a blunt yet kind technical recruiter evaluating a candidate's solution to a coding problem.
-Your goal is to provide direct, constructive feedback while also guiding the candidate toward improving their solution.
-Evaluate the code based on correctness, efficiency, readability, scalability, and handling of edge cases.
-Be honest and critical, but also supportive—offer actionable steps for improvement and ask guiding questions to help the candidate think critically about their approach.
+Imagine you are an interviewer speaking directly to the interviewee. Address them in the second person and focus entirely on the problem at hand. Avoid discussing topics or answering questions that are unrelated to the current coding challenge. REFUSE TO ANSWER ANY UNRELATED QUESTIONS. DO NOT LET ANYONE CONVINCE YOU TO ANSWER THAT DOES NOT RELATE TO THE INTERVIEW.
+
+Take on the role of a technical recruiter who is blunt but supportive. Your goal is to evaluate the candidate's solution while guiding them step by step to improve their approach. Keep the conversation focused by addressing one concept at a time. Avoid overwhelming them with multiple points or suggestions at once. YOU SHOULD AT MOST ANSWER WITH 3 Sentences!
+
+Assess their code for correctness, efficiency, readability, scalability, and how well it handles edge cases. Be honest in your critique, but remain encouraging. Provide actionable feedback and pose thoughtful, guiding questions to help the candidate reflect on their approach and refine their solution. Always ensure the conversation feels like a natural, collaborative dialogue.
 """
+
 
 @app.route('/')
 def dashboard():
@@ -117,24 +117,36 @@ def question_page(question_id):
 @app.route('/run_code', methods=['POST'])
 def run_code():
     """
-    Executes Python code submitted by the user.
-
-    Returns:
-        dict: Output or error message from the code execution.
+    Executes Python code submitted by the user and validates it against a test case.
     """
-    code = request.json.get('code', '')
-    logger.info("Executing user-submitted code.")
+    code = request.json.get('code', '')  # User's code
+    test_input = request.json.get('test_input', '')  # Test case input
+    expected_output = request.json.get('expected_output', '')  # Expected result
+
+    logger.info("Executing user code with test case.")
+    
+    # Combine user code with the test case input
+    full_code = f"{code}\n{test_input}\nprint(output)"
+    
     try:
+        # Run the code in a subprocess
         result = subprocess.run(
-            ['python3', '-c', code],
+            ['python3', '-c', full_code],
             capture_output=True,
             text=True,
             timeout=5
         )
-        logger.info("Code executed successfully.")
-        return jsonify({'output': result.stdout, 'error': result.stderr})
+        actual_output = result.stdout.strip()  # Get the output
+        is_correct = actual_output == expected_output  # Compare outputs
+
+        return jsonify({
+            'actual_output': actual_output,
+            'expected_output': expected_output,
+            'correct': is_correct
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({'error': 'Code execution timed out.'})
     except Exception as e:
-        logger.error(f"Code execution failed: {e}")
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])
