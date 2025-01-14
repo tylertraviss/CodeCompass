@@ -117,24 +117,36 @@ def question_page(question_id):
 @app.route('/run_code', methods=['POST'])
 def run_code():
     """
-    Executes Python code submitted by the user.
-
-    Returns:
-        dict: Output or error message from the code execution.
+    Executes Python code submitted by the user and validates it against a test case.
     """
-    code = request.json.get('code', '')
-    logger.info("Executing user-submitted code.")
+    code = request.json.get('code', '')  # User's code
+    test_input = request.json.get('test_input', '')  # Test case input
+    expected_output = request.json.get('expected_output', '')  # Expected result
+
+    logger.info("Executing user code with test case.")
+    
+    # Combine user code with the test case input
+    full_code = f"{code}\n{test_input}\nprint(output)"
+    
     try:
+        # Run the code in a subprocess
         result = subprocess.run(
-            ['python3', '-c', code],
+            ['python3', '-c', full_code],
             capture_output=True,
             text=True,
             timeout=5
         )
-        logger.info("Code executed successfully.")
-        return jsonify({'output': result.stdout, 'error': result.stderr})
+        actual_output = result.stdout.strip()  # Get the output
+        is_correct = actual_output == expected_output  # Compare outputs
+
+        return jsonify({
+            'actual_output': actual_output,
+            'expected_output': expected_output,
+            'correct': is_correct
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({'error': 'Code execution timed out.'})
     except Exception as e:
-        logger.error(f"Code execution failed: {e}")
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])

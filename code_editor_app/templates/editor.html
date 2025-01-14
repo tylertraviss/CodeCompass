@@ -66,20 +66,38 @@ Output: {{ example.output }}
 
     <script>
         // Run code logic
-        document.getElementById('run-btn').addEventListener('click', async () => {
-            const code = document.getElementById('code-editor').value;
-            try {
-                const response = await fetch('/run_code', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
-                });
-                const result = await response.json();
-                document.getElementById('output').textContent = result.output || result.error;
-            } catch (error) {
-                document.getElementById('output').textContent = `Error: ${error.message}`;
+    document.getElementById('run-btn').addEventListener('click', async () => {
+        const code = document.getElementById('code-editor').value; // User's code
+        const testInput = "{{ examples[0].input }}"; // Test input
+        const expectedOutput = "{{ examples[0].output }}"; // Expected output
+
+        try {
+            const response = await fetch('/run_code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: code,
+                    test_input: testInput,
+                    expected_output: expectedOutput
+                })
+            });
+            const result = await response.json();
+
+            const outputSection = document.getElementById('output');
+            if (result.error) {
+                outputSection.textContent = `Error: ${result.error}`;
+            } else {
+                outputSection.innerHTML = `
+                <p><b>Test Input:</b> ${testInput}</p>
+                <p><b>Expected Output:</b> ${expectedOutput}</p>
+                <p><b>Actual Output:</b> ${result.actual_output}</p>
+                <p><b>Result:</b> ${result.correct ? '✅ Passed' : '❌ Failed'}</p>
+            `;
             }
-        });
+        } catch (error) {
+            document.getElementById('output').textContent = `Error: ${error.message}`;
+        }
+    });
 
         // Ask AI logic
         document.getElementById('ask-ai-btn').addEventListener('click', async () => {
