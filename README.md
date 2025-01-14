@@ -2,6 +2,8 @@
 
 **CodeCompass** is an AI-powered LeetCode assistant designed to help users solve coding problems more efficiently. Built using Python and Flask, it provides real-time solutions, detailed explanations, all through a user-friendly web interface.
 
+Made for Nosu Hackathon. What a fun opportunity to practice my skillset.
+
 ## Our Live Website
 
 [CodeCompass Live Platform](https://codecompass-17r4.onrender.com)
