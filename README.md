@@ -4,9 +4,7 @@
 
 Made for Nosu Hackathon. What a fun opportunity to practice my skillset.
 
-## Our Live Website
-
-[CodeCompass Live Platform](https://codecompass-17r4.onrender.com)
+Privately reach out if you would like to use this software.
 
 ---
 
@@ -40,7 +38,7 @@ As we continue to enhance **CodeCompass**, here are some planned improvements (b
 1. **LeetCode API Integration**:
    - Automate fetching all LeetCode questions, including problem details, tags, and difficulty levels.
    - Keep the question database up to date with the latest additions and updates from LeetCode.
-   - 50+ tests per application. Right now, single-handly verifying one.
+   - 50+ tests per application. Right now, one test case per.
 
 2. **User Progress Tracking**:
    - Implement user authentication and profiles.
