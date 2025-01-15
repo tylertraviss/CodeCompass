@@ -8,7 +8,16 @@ Made for Nosu Hackathon. What a fun opportunity to practice my skillset.
 
 [CodeCompass Live Platform](https://codecompass-17r4.onrender.com)
 
----
+## Preview
+
+In this image, the user is starting their question, receiving guidance from the technical recruiter.
+
+![Starting Question](images/starting-question.png)
+
+Here, the user is complete the question and feedback is given. The user also compiles and
+the results of the test cases are compiled.
+
+![Completing Question](images/completed-question.png)
 
 ## Features
 
@@ -61,18 +70,34 @@ As we continue to enhance **CodeCompass**, here are some planned improvements (b
 6. **Gamification**:
    - Introduce badges, achievements, and streaks to keep users motivated and engaged.
 
-## Preview
+## Steps to Run Locally
 
-In this image, the user is starting their question, receiving guidance from the technical recruiter.
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository_url>
+   cd CodeCompass
+   ```
 
-![Starting Question](images/starting-question.png)
+2. **Set Up a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # On Windows, use 'venv\Scripts\activate'
+   ```
 
-Here, the user is complete the question and feedback is given. The user also compiles and
-the results of the test cases are compiled.
+3. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-![Completing Question](images/completed-question.png)
+4. **Run the Application**:
+   ```bash
+   python code_editor_app/app.py
+   ```
 
---- 
+5. **Access the Application**:
+   Open your browser and navigate to `http://127.0.0.1:5000`.
+
+---
 
 These enhancements aim to make **CodeCompass** an indispensable tool for LeetCode enthusiasts, competitive programmers, and anyone looking to improve their problem-solving skills.
 
