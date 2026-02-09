@@ -27,7 +27,9 @@ Attributes:
 """
 
 import logging
-from flask import Flask, render_template, request, jsonify
+import time
+import uuid
+from flask import Flask, render_template, request, jsonify, g, has_request_context
 import subprocess
 from dotenv import load_dotenv
 import os, json
@@ -45,7 +47,49 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)  # Create a logger for the application
 
+
+def _build_log_context(**extra):
+    """Attach request scoped metadata to log lines for easier tracing."""
+    context = {}
+    if has_request_context():
+        context.update({
+            'method': request.method,
+            'path': request.path,
+            'remote_addr': request.remote_addr or 'unknown',
+            'user_agent': request.headers.get('User-Agent', 'unknown'),
+            'request_id': getattr(g, 'request_id', 'n/a')
+        })
+    context.update(extra)
+    return context
+
+
+def log_event(level, event, **extra):
+    """Consistently format log entries as structured JSON blobs."""
+    context = _build_log_context(event=event, **extra)
+    logger.log(level, json.dumps(context, default=str))
+
 app = Flask(__name__)
+
+
+@app.before_request
+def start_request_timer():
+    g.request_start_time = time.time()
+    g.request_id = uuid.uuid4().hex
+    log_event(logging.INFO, "request_started")
+
+
+@app.after_request
+def log_request_response(response):
+    duration_ms = int((time.time() - getattr(g, 'request_start_time', time.time())) * 1000)
+    log_event(
+        logging.INFO,
+        "request_completed",
+        status_code=response.status_code,
+        duration_ms=duration_ms,
+        content_length=response.content_length,
+    )
+    return response
+
 
 load_dotenv()  # Load environment variables from .env file
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -67,16 +111,16 @@ def dashboard():
     Returns:
         str: Rendered HTML template with a list of questions from `leetcode_questions.json`.
     """
-    logger.info("Loading dashboard...")
+    log_event(logging.INFO, "load_dashboard_start")
     base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
     try:
         with open(json_path, 'r') as f:
             questions = json.load(f)
-        logger.info("Successfully loaded questions from leetcode_questions.json")
+        log_event(logging.INFO, "load_dashboard_success", question_count=len(questions))
     except FileNotFoundError as e:
-        logger.error(f"Failed to load questions: {e}")
+        log_event(logging.ERROR, "load_dashboard_error", error=str(e))
         return "Questions file not found!", 404
 
     return render_template('dashboard.html', questions=questions)
@@ -96,7 +140,7 @@ def question_page(question_id):
     Returns:
         str: Rendered HTML template for the coding question and editor.
     """
-    logger.info(f"Loading question with ID: {question_id}")
+    log_event(logging.INFO, "load_question_start", question_id=question_id)
     base_dir = os.path.dirname(os.path.abspath(__file__))
     json_path = os.path.join(base_dir, '../data/leetcode_questions.json')
 
@@ -105,11 +149,11 @@ def question_page(question_id):
             questions = json.load(f)
         question = next((q for q in questions if q['id'] == question_id), None)
         if not question:
-            logger.warning(f"Question with ID {question_id} not found.")
+            log_event(logging.WARNING, "question_not_found", question_id=question_id)
             return "Question not found", 404
-        logger.info(f"Successfully loaded question: {question['title']}")
+        log_event(logging.INFO, "load_question_success", question_id=question_id, title=question['title'])
     except FileNotFoundError as e:
-        logger.error(f"Failed to load questions file: {e}")
+        log_event(logging.ERROR, "load_question_error", question_id=question_id, error=str(e))
         return "Questions file not found!", 404
 
     return render_template('editor.html', **question)
@@ -123,7 +167,7 @@ def run_code():
     test_input = request.json.get('test_input', '')  # Test case input
     expected_output = request.json.get('expected_output', '')  # Expected result
 
-    logger.info("Executing user code with test case.")
+    log_event(logging.INFO, "run_code_start", has_code=bool(code), has_test_input=bool(test_input))
     
     # Combine user code with the test case input
     full_code = f"{code}\n{test_input}\nprint(output)"
@@ -139,14 +183,24 @@ def run_code():
         actual_output = result.stdout.strip()  # Get the output
         is_correct = actual_output == expected_output  # Compare outputs
 
+        log_event(
+            logging.INFO,
+            "run_code_completed",
+            is_correct=is_correct,
+            stdout_length=len(result.stdout),
+            stderr_length=len(result.stderr),
+            return_code=result.returncode,
+        )
         return jsonify({
             'actual_output': actual_output,
             'expected_output': expected_output,
             'correct': is_correct
         })
     except subprocess.TimeoutExpired:
+        log_event(logging.WARNING, "run_code_timeout")
         return jsonify({'error': 'Code execution timed out.'})
     except Exception as e:
+        log_event(logging.ERROR, "run_code_error", error=str(e))
         return jsonify({'error': str(e)})
 
 @app.route('/ask_ai', methods=['POST'])
@@ -161,7 +215,7 @@ def talk_to_recruiter():
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
-    logger.info("Processing AI recruiter feedback.")
+    log_event(logging.INFO, "ask_ai_start", has_code=bool(code), has_query=bool(query))
     messages = [
         {"role": "system", "content": STATIC_CONTEXT},
         {"role": "user", "content": f"""
@@ -184,10 +238,10 @@ def talk_to_recruiter():
             temperature=0.7
         )
         recruiter_feedback = response['choices'][0]['message']['content'].strip()
-        logger.info("Successfully fetched AI feedback.")
+        log_event(logging.INFO, "ask_ai_success", response_length=len(recruiter_feedback))
         return jsonify({'response': recruiter_feedback})
     except Exception as e:
-        logger.error(f"OpenAI API error: {e}")
+        log_event(logging.ERROR, "ask_ai_error", error=str(e))
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/request_help', methods=['POST'])
@@ -202,7 +256,7 @@ def request_help():
     code = request.json.get('code', '')
     problem_context = request.json.get('problem_context', '')
 
-    logger.info("Processing help request.")
+    log_event(logging.INFO, "request_help_start", has_code=bool(code), has_query=bool(query))
     messages = [
         {"role": "system", "content": """
 You are an AI assistant providing helpful hints and guidance to a candidate solving a coding problem.
@@ -230,10 +284,10 @@ Your tone should be kind, encouraging, and focused on teaching.
             temperature=0.7
         )
         help_response = response['choices'][0]['message']['content'].strip()
-        logger.info("Successfully processed help request.")
+        log_event(logging.INFO, "request_help_success", response_length=len(help_response))
         return jsonify({'response': help_response})
     except Exception as e:
-        logger.error(f"OpenAI API error: {e}")
+        log_event(logging.ERROR, "request_help_error", error=str(e))
         return jsonify({'error': f"OpenAI API error: {str(e)}"})
 
 @app.route('/get_summary', methods=['GET'])
@@ -244,10 +298,10 @@ def return_to_dashboard():
     Returns:
         str: Rendered HTML template with the summary of progress.
     """
-    logger.info("Generating user summary.")
+    log_event(logging.INFO, "summary_generated")
     summary = "Here's a summary of your progress so far: You've solved X problems, optimized Y solutions, and practiced Z edge cases."
     return render_template('summary.html', summary=summary)
 
 if __name__ == '__main__':
-    logger.info("Starting the Flask application...")
+    log_event(logging.INFO, "app_start")
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5001)))
